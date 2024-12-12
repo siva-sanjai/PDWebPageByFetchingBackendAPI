@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProcessDrive - Why ProcessDrive Section</title>
+    <style>
+        /* Styling for the why section */
+        .why {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin: 20px;
+            
+        }
+
+        .whycard {
+            display: flex;
+            flex-direction: row; /* Align image and content horizontally */
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .whycard img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover; /* Ensures image does not stretch */
+            margin-right: 20px; /* Spacing between image and text */
+            border-radius: 8px; /* Optionally round image corners */
+        }
+
+        .whycard .content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Centers the text vertically */
+            flex-grow: 1; /* Makes the content area grow and take up remaining space */
+        }
+
+        .whycard h3 {
+            font-size: 1.5rem;
+            color: #333;
+            margin: 0;
+        }
+
+        .whycard p {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        /* Add responsive behavior */
+        @media (min-width: 768px) {
+            .why {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 20px;
+            }
+
+            .whycard {
+                width: 45%; /* Each card takes up 45% of the container width */
+            }
+        }
+
+        /* Full-width cards on small screens */
+        @media (max-width: 767px) {
+            .whycard {
+                width: 100%;
+            }
+        }
+
+
+
+
+
+
+        .our-services {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 20px;
+}
+
+.service-card {
+    position: relative;
+    padding: 20px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.service-title {
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.service-description {
+    display: none; /* Hidden by default */
+    margin-top: 10px;
+    font-size: 16px;
+    color: #666;
+}
+
+.service-card:hover .service-description {
+    display: block; /* Display description on hover */
+}
+
+    </style>
+</head>
+<body>
+    <section class="why">
+        <!-- Cards will be injected here -->
+    </section>
+    <section class="our-services">
+        <div class="service-card">
+            <h3 class="service-title">1. User Story</h3>
+            <p class="service-description">User stories succinctly outline features or requirements from the user's perspective, guiding development teams in creating solutions aligned with user needs and business goals.</p>
+        </div>
+    </section>
+    <script>
+        const apiUrl = "https://admin.processdrive.com/api/page/home"; // Your API URL
+
+        async function fetchAndDisplayWhyProcessDrive() {
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json(); // Parse the response as JSON
+                console.log("API Response:", data); // Inspect the entire API response
+
+                // Assuming that data contains the categories and sub_pages
+                const subPages = data.sub_pages || [];
+                const categorySlug = "why-processdrive";
+
+                // Find the sub_page corresponding to the category 'why-processdrive'
+                const relevantSubPages = subPages.filter(subPage => subPage.category_slug === categorySlug);
+
+                if (relevantSubPages.length > 0) {
+                    const whySection = document.querySelector(".why");
+
+                    relevantSubPages.forEach(subPage => {
+                        // Fetch the translation data for each sub_page (locale "en")
+                        const translation = subPage.translations.find(t => t.locale === "en");
+
+                        if (translation && translation.title && translation.description) {
+                            const card = document.createElement('div');
+                            card.classList.add('whycard'); // Apply card style
+
+                            card.innerHTML = `
+                                <img src="${subPage.image}" alt="Image for ${translation.title}" />
+                                <div class="content">
+                                    <h3>${translation.title}</h3>
+                                    <p>${translation.description}</p>
+                                </div>
+                            `;
+
+                            // Append the card to the section
+                            whySection.appendChild(card);
+                        }
+                    });
+                } else {
+                    // If no relevant sub_pages are found
+                    const noItemsMessage = document.createElement('p');
+                    noItemsMessage.textContent = "No items found for 'Why ProcessDrive'.";
+                    document.querySelector('.why').appendChild(noItemsMessage);
+                }
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+
+        // Call the function to fetch and display the data
+        fetchAndDisplayWhyProcessDrive();
+
+        async function fetchAndDisplayOurServices() {
+    try {
+        const apiUrl = "https://admin.processdrive.com/api/page/home"; // Your API URL
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json(); 
+        console.log("API Response:", data); 
+
+        const subPages = data.sub_pages || [];
+        const categorySlug = "our-process"; 
+
+        const relevantSubPages = subPages.filter(subPage => subPage.category_slug === categorySlug);
+
+        if (relevantSubPages.length > 0) {
+            const servicesSection = document.querySelector(".our-services");
+
+            relevantSubPages.forEach(subPage => {
+                const translation = subPage.translations.find(t => t.locale === "en");
+
+                if (translation && translation.title && translation.description) {
+                    const card = document.createElement('div');
+                    card.classList.add('service-card');
+
+                    card.innerHTML = `
+                        <h3 class="service-title">${translation.title}</h3>
+                        <p class="service-description">${translation.description}</p>
+                    `;
+
+                    servicesSection.appendChild(card); 
+                }
+            });
+        } else {
+            const noItemsMessage = document.createElement('p');
+            noItemsMessage.textContent = "No services found for 'Our Process'.";
+            document.querySelector('.our-services').appendChild(noItemsMessage);
+        }
+
+    } catch (error) {
+        console.error("Error fetching data:", error); 
+    }
+}
+
+fetchAndDisplayOurServices();
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Services</title>
+    <style>
+        /* General styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .circle-layout {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr); 
+            grid-gap: 20px;
+            width: 80%;
+            margin: 50px auto;
+            justify-items: center;
+        }
+
+        .service-card {
+            margin-top: 200px;
+            width: 120px;
+            height: 120px;
+            background-color: #f3f3f3;
+           
+            display: flex;
+            /* flex-direction: column; */
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            position: relative;
+            text-align: center;
+            padding: 10px;
+            border: 5px solid #ccc;
+         border-top-color: #3498db; /* Changing the top border color */
+         border-radius: 50%; /* Making the border round */
+         animation: spin 1s linear infinite; 
+        }
+        /* @keyframes spin {
+         to {
+            transform: rotate(360deg);
+         }
+      } */
+        .service-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            z-index: 1;
+            position: relative;
+        }
+
+        .service-description-box {
+            width: 100%;
+            background-color: #fff;
+            padding: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: absolute;
+            top: -160px; 
+            left: 0;
+            display: none; 
+            z-index: 0;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .service-card:hover .service-description-box {
+            display: flex; 
+        }
+
+    </style>
+</head>
+<body>
+
+    <section class="circle-layout">
+        <!-- Dynamic content will be added here by JavaScript -->
+    </section>
+
+    <script>
+        async function fetchAndDisplayOurServices() {
+            try {
+                const apiUrl = "https://admin.processdrive.com/api/page/home"; // Your API URL
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log("API Response:", data);
+
+                const subPages = data.sub_pages || [];
+                const categorySlug = "our-process"; 
+
+                const relevantSubPages = subPages.filter(subPage => subPage.category_slug === categorySlug);
+
+                if (relevantSubPages.length > 0) {
+                    const servicesSection = document.querySelector(".circle-layout");
+
+                   
+                    relevantSubPages.slice(0, 6).forEach((subPage, index) => { 
+                        const translation = subPage.translations.find(t => t.locale === "en");
+
+                       
+                        if (translation && translation.title && translation.description) {
+                            const card = document.createElement('div');
+                            card.classList.add('service-card');
+
+                           
+                            card.innerHTML = `
+                                <h3 class="service-title">${translation.title}</h3>
+                                <div class="service-description-box">${translation.description}</div>
+                            `;
+
+                            
+                            servicesSection.appendChild(card);
+                        }
+                    });
+                } else {
+                    const noItemsMessage = document.createElement('p');
+                    noItemsMessage.textContent = "No services found for 'Our Process'.";
+                    document.querySelector('.circle-layout').appendChild(noItemsMessage);
+                }
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+
+        fetchAndDisplayOurServices();
+    </script>
+
+</body>
+</html>

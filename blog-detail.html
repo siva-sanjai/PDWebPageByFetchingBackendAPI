@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog Detail</title>
+  <link rel="icon" href="./pdicon.png">
+    
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.6;
+    }
+    .blog-detail {
+  width: 90%;           
+  max-width: 1000px;     
+  margin: auto;         
+  padding: 20px;
+  border: 1px solid #cac9c9;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  margin-bottom: 20px;
+}
+
+/* Media Queries for Responsive Design */
+@media (min-width: 768px) {
+  .blog-detail {
+    width: 85%;        
+  }
+}
+
+@media (min-width: 1200px) {
+  .blog-detail {
+    width: 70%;        
+  }
+}
+
+    .blog-detail img {
+  width: 100%;        
+  height: auto;       
+  margin-bottom: 20px;
+}
+   
+    
+    h1 {
+      color: #333;
+    }
+    .other-blogs {
+      max-width: 1200px;
+      margin: auto;
+      width: 95%;
+    }
+    .other-blogs h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .other-blogs .blog-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: space-between;
+    }
+    .blog-card {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 100%;      
+  max-width: 100%;      
+  margin: 10px 0;       
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #fff;
+  transition: transform 0.2s ease;
+}
+
+/* Media Query for Tablets (Medium Screens) */
+@media (min-width: 768px) {
+  .blog-card {
+    flex-basis: 48%;    
+    max-width: 48%;
+    margin: 10px 1%;    
+  }
+}
+
+/* Media Query for Desktops (Large Screens) */
+@media (min-width: 1200px) {
+  .blog-card {
+    flex-basis: 25%;     
+    max-width: 25%;
+    margin: 10px 1.33%; 
+  }
+}
+
+    .blog-card:hover {
+      transform: scale(1.02);
+    }
+    .blog-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+    }
+    .blog-card-content {
+      padding: 5px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      height: 250px;
+    }
+    .blog-card-content h3 {
+     margin: 0;
+      color: #333;
+    }
+    .blog-card-content p {
+      color: #666;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow-wrap: break-word;
+    }
+    .read-more {
+      color: #007BFF;
+      text-decoration: none;
+      font-weight: bold;
+      text-align: left;
+    }
+    .read-more:hover {
+      text-decoration: underline;
+    }
+    .pro{
+      display: flex;
+      padding: 0px 20px;
+      gap: 20px;
+    }
+    .pro img{
+      padding: 10px 0px;
+      border-radius: 50%;
+      height: 40px;
+      width: 40px;
+    }
+    .back-btn {
+    padding: 10px 15px;
+    font-size: 16px;
+    color: white;
+    background-color: rgb(39, 168, 248); 
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 20%; 
+    text-align: center;
+    margin-top: 50px;
+    margin-left: 500px;
+}
+
+.back-btn:hover {
+    background-color: rgb(0, 92, 150); 
+    
+}
+
+  
+  </style>
+</head>
+<body>
+  <div id="blog-detail">
+    <!-- Blog details will be dynamically added here -->
+  </div>
+
+  <div class="other-blogs">
+    <h2>Other Blogs</h2>
+    <div id="other-blogs" class="blog-cards">
+      <!-- Other blogs will be dynamically added here -->
+    </div>
+  </div>
+  <button type="button" class="back-btn" onclick="window.location.href='home.html#blogs'">Back</button>
+  <script>
+    // Function to get slug
+    function getURLParameter(name) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(name);
+    }
+
+    
+    const slug = getURLParameter('slug'); // Get the slug from the URL
+    if (slug) {
+      fetch('https://admin.processdrive.com/api/blogs') // Fetch all blogs
+        .then(response => response.json())
+        .then(data => {
+          // Find the blog with the matching slug
+          const blog = data.find(post => post.slug === slug);
+
+          if (blog) {
+            // Display the main blog details
+            const blogDetailContainer = document.getElementById('blog-detail');
+            blogDetailContainer.innerHTML = `
+              <div class="blog-detail">
+                <h1>${blog.title}</h1>
+                <img src="${blog.image}" alt="Blog Image">
+                <h3>Published on: ${blog.published_date}</h3>
+                <p>${blog.content}</p>
+              </div>
+            `;
+
+            // Display other blogs, excluding the current one
+            const otherBlogsContainer = document.getElementById('other-blogs');
+            const otherBlogs = data.filter(post => post.slug !== slug); // Exclude current blog
+            otherBlogs.forEach(blog => {
+              const blogCard = document.createElement('div');
+              blogCard.classList.add('blog-card');
+              blogCard.innerHTML = `
+       
+                <img src="${blog.image}" alt="${blog.title}"><br>
+                <div class="blog-card-content">
+                  <h3>${blog.title}</h3>
+                 <div class="pro">
+          <img   src="${blog.profile}" alt="Author Image">
+           <h6><big><big>${blog.published_date}</big></big></h6>
+        </div>
+                 <p class="short-content">${blog.short_content}</p>
+                  <a href="blog-detail.html?slug=${blog.slug}" class="read-more">Read More </a>
+                </div>
+              `;
+              otherBlogsContainer.appendChild(blogCard);
+            });
+          } else {
+           
+            document.getElementById('blog-detail').innerHTML = `
+              <p>Blog not found. Please check the URL.</p>
+            `;
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching blog details:', error);
+        });
+    } else {
+      // Handle case when no slug is provided in the URL
+      document.getElementById('blog-detail').innerHTML = `
+        <p>No blog slug provided in the URL.</p>
+      `;
+    }
+
+  
+
+    
+  </script>
+</body>
+</html>

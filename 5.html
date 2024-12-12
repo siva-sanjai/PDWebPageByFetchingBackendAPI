@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading Icon</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            overflow: hidden; /* Prevent scrolling while loading */
+        }
+
+        /* Loader container */
+        .loader-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Make sure it appears above everything else */
+        }
+
+        /* Loading spinner */
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3; /* Light gray border */
+            border-top: 5px solid #007bff; /* Blue border for animation */
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Hide content initially */
+        .content {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Icon -->
+    <div class="loader-container">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <h1>Welcome to the Page</h1>
+        <img src="https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg"  height="200px" width="300px" alt="">
+        <p>This is your main content. It will appear after loading.</p>
+    </div>
+
+    <script>
+        // Wait for the page to fully load
+        window.addEventListener("load", () => {
+            // Hide the loader
+            const loaderContainer = document.querySelector(".loader-container");
+            loaderContainer.style.display = "none";
+
+            // Show the content
+            const content = document.querySelector(".content");
+            content.style.display = "block";
+
+            // Restore scrolling
+            document.body.style.overflow = "auto";
+        });
+    </script>
+</body>
+</html>

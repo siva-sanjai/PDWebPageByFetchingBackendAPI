@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        
+        .circle-layout {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 10px;
+    width: 300px; /* Adjust the width and height to control the overall size */
+    height: 300px;
+    margin: 50px auto;
+    position: relative;
+}
+
+.service-card {
+    width: 80px; /* Size of each circle */
+    height: 80px; /* Size of each circle */
+    background-color: #f3f3f3;
+    border-radius: 50%; /* Makes it a circle */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.service-title {
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
+
+.service-description {
+    display: none; /* Hide description by default */
+    font-size: 12px;
+    color: #666;
+    margin-top: 10px;
+}
+
+.service-card.active .service-description {
+    display: block; /* Show description when the card is active */
+}
+
+.circle-layout .service-card:nth-child(1) {
+    grid-row: 1 / 2; /* First circle in the first row */
+    grid-column: 2 / 3; /* Center of the row */
+}
+
+.circle-layout .service-card:nth-child(2) {
+    grid-row: 2 / 3; /* Second row, first circle */
+    grid-column: 1 / 2;
+}
+
+.circle-layout .service-card:nth-child(3) {
+    grid-row: 2 / 3; /* Second row, second circle */
+    grid-column: 3 / 4;
+}
+
+.circle-layout .service-card:nth-child(4) {
+    grid-row: 3 / 4; /* Third row, first circle */
+    grid-column: 1 / 2;
+}
+
+.circle-layout .service-card:nth-child(5) {
+    grid-row: 3 / 4; /* Third row, second circle */
+    grid-column: 3 / 4;
+}
+
+.circle-layout .service-card:nth-child(6) {
+    grid-row: 4 / 5; /* Fourth row, center circle */
+    grid-column: 2 / 3;
+}
+
+
+    </style>
+</head>
+<body>
+    <section class="our-services">
+        
+    </section>
+    <script>
+    async function fetchAndDisplayOurServices() {
+    try {
+        const apiUrl = "https://admin.processdrive.com/api/page/home"; // Your API URL
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("API Response:", data);
+
+        const subPages = data.sub_pages || [];
+        const categorySlug = "our-process"; // The category to filter by
+
+        // Filter sub-pages that belong to the "Our Process" category
+        const relevantSubPages = subPages.filter(subPage => subPage.category_slug === categorySlug);
+
+        // Check if there are relevant sub-pages to display
+        if (relevantSubPages.length > 0) {
+            const servicesSection = document.querySelector(".circle-layout");
+
+            // Loop through each relevant sub-page and create a service card
+            relevantSubPages.slice(0, 6).forEach((subPage, index) => { // Limit to 6 items
+                const translation = subPage.translations.find(t => t.locale === "en");
+
+                // Only create cards if the title and description exist
+                if (translation && translation.title && translation.description) {
+                    const card = document.createElement('div');
+                    card.classList.add('service-card');
+
+                    // Add title and description to the card
+                    card.innerHTML = `
+                        <h3 class="service-title">${translation.title}</h3>
+                        <p class="service-description">${translation.description}</p>
+                    `;
+
+                    // Add click event to toggle the active state
+                    const titleElement = card.querySelector('.service-title');
+                    titleElement.addEventListener('click', () => {
+                        // First, remove 'active' from all cards
+                        const allCards = document.querySelectorAll('.service-card');
+                        allCards.forEach(card => card.classList.remove('active'));
+
+                        // Then, add 'active' to the clicked card
+                        card.classList.add('active');
+                    });
+
+                    // Append the card to the services section
+                    servicesSection.appendChild(card);
+                }
+            });
+        } else {
+            const noItemsMessage = document.createElement('p');
+            noItemsMessage.textContent = "No services found for 'Our Process'.";
+            document.querySelector('.circle-layout').appendChild(noItemsMessage);
+        }
+
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    }
+}
+
+fetchAndDisplayOurServices();
+
+        
+    </script>
+</body>
+</html>

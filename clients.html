@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Clients</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .section-description {
+            text-align: center;
+            margin: 10px auto 30px;
+            font-size: 16px;
+            color: #555;
+            max-width: 800px;
+        }
+
+        .image-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 0 10px;
+        }
+
+        .image-grid img {
+            background-color: rgb(255, 118, 118);
+            max-width: 200px;
+            height: 60px;
+            padding: 6px 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .image-grid img:hover {
+            transform: scale(1.1);
+        }
+        .customer{
+            background-image: linear-gradient(135deg,lightskyblue,white,white,lightskyblue);
+          
+           height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <section class="customer">
+        <!-- Title and Description -->
+    <div class="section-header">
+        <h1 class="section-title"></h1>
+        <p class="section-description"></p>
+    </div>
+
+    <!-- Image Grid -->
+    <section class="image-grid">
+        <!-- Images will be added here dynamically -->
+    </section>
+
+    </section>
+   
+    <script>
+        async function fetchAndDisplayClients() {
+            try {
+                const apiUrl = "https://admin.processdrive.com/api/page/home"; // Your API URL
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log("API Response:", data);
+
+                // Filter the "Our Clients" category
+                const clientsCategory = data.sub_pages.find(
+                    (subPage) => subPage.category_slug === "our-clients"
+                );
+
+                if (clientsCategory) {
+                    // Set the title and description at the top of the page
+                    document.querySelector(".section-title").textContent = clientsCategory.category.translations[0].title || "Our Clients";
+                    document.querySelector(".section-description").textContent = clientsCategory.category.translations[0].description || "Description not available";
+
+                    // Find all sub-pages (images) in the "Our Clients" category
+                    const clientImages = data.sub_pages.filter(
+                        (subPage) => subPage.category_slug === "our-clients" && subPage.image
+                    );
+
+                    const imageGrid = document.querySelector(".image-grid");
+
+                    // Add each client image directly
+                    clientImages.forEach((client) => {
+                        const img = document.createElement("img");
+                        img.src = client.image;
+                        img.alt = client.title || "Client Image";
+                        imageGrid.appendChild(img);
+                    });
+                } else {
+                    console.error("No clients category found.");
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+
+        // Fetch and display clients
+        fetchAndDisplayClients();
+    </script>
+</body>
+</html>
